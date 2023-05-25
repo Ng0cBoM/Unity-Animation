@@ -20,14 +20,19 @@ public class PlayerController : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         rigidbody = GetComponent<Rigidbody2D>();
+        isAttacking = false;
     }
 
     // Update is called once per frame
     void Update()
     {
         animator.SetBool("IsJump", !onGround);
-        Move();
-        Jump();
+        if (!isAttacking)
+        {
+            Move();
+            Jump();
+        }
+        
         Attack();
     }
 
@@ -35,17 +40,20 @@ public class PlayerController : MonoBehaviour
     {
         horizontal = Input.GetAxis("Horizontal");
         transform.position += new Vector3(horizontal * speed * Time.deltaTime, 0, 0);
+        animator.SetFloat("Speed", Mathf.Abs(horizontal));
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            speed = 10;
             animator.SetBool("IsRun", true);
+            speed = 10;
+            
         }
         else if (Input.GetKeyUp(KeyCode.LeftShift))
         {
-            speed = 5;
             animator.SetBool("IsRun", false);
+            speed = 5;
+            
         }
-        animator.SetFloat("Speed", Mathf.Abs(horizontal));
+        
         if (horizontal > 0)
         {
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
@@ -58,7 +66,7 @@ public class PlayerController : MonoBehaviour
 
     void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && onGround == true)
+        if (Input.GetKeyDown(KeyCode.Space) && onGround == true )
         {
             onGround = false;
             animator.SetTrigger("Jump");
@@ -74,10 +82,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void Trail()
+    void PlayTrail()
     {
         particleSystem.Play();
+        isAttacking = true;
+
     }
+
+    void StopTrail()
+    {
+        particleSystem.Stop();
+        isAttacking = false;
+    }
+
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
