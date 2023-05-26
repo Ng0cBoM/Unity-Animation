@@ -70,8 +70,13 @@ public class PlayerController : MonoBehaviour
         {
             onGround = false;
             animator.SetTrigger("Jump");
-            rigidbody.AddForce(new Vector2(0, jumpForce));
+            
         }
+    }
+
+    void DoJump()
+    {
+        rigidbody.AddForce(new Vector2(0, jumpForce));
     }
 
     void Attack()
